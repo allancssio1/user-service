@@ -42,12 +42,6 @@ Thumbs.db
 *.sublime-workspace
 *.sublime-project
 
-# Docker
-.dockerignore
-
-# Drizzle
-drizzle/
-
 # Temporary files
 *.tmp
 *.temp
