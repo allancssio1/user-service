@@ -11,40 +11,42 @@ services:
       - POSTGRESQL_DATABASE=${POSTGRES_DB}
     volumes:
       - user_db_data:/bitnami/postgresql
-    # networks:
-    #   - user_network
+    networks:
+      - user_network
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 5s
       timeout: 5s
       retries: 5
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: api_user
-  #   environment:
-  #     - POSTGRESQL_USERNAME=${POSTGRES_USER}
-  #     - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD}
-  #     - POSTGRESQL_DATABASE=${POSTGRES_DB}
-  #     - PORT=${PORT}
-  #     - JWT_SECRET=${JWT_SECRET}
-  #   ports:
-  #     - '3333:3333'
-  #   expose:
-  #     - 3333
-  #   depends_on:
-  #     user_db:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./src:/app/src
-  #   networks:
-  #     - user_network
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api_user
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+    ports:
+      - '3333:3333'
+    expose:
+      - 3333
+    depends_on:
+      user_db:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+    networks:
+      - user_network
 
 volumes:
   user_db_data:
     driver: local
-# networks:
-#   user_network:
-#     driver: bridge
+networks:
+  user_network:
+    driver: bridge

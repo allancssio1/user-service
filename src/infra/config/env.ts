@@ -7,7 +7,6 @@ const envSchema = z.object({
   POSTGRES_USER: z.string(),
   POSTGRES_DB: z.string(),
   DATABASE_URL: z.string().optional(),
-  // JWT_SECRET: z.string(),
   PORT: z.coerce.number().default(3333),
   NODE_ENV: z.enum(['dev', 'test', 'production']).default('dev'),
 })
