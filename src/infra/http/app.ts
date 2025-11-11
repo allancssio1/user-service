@@ -1,15 +1,18 @@
 import fastify from 'fastify'
 import { fastifyCors } from '@fastify/cors'
+import { fastifySwagger } from '@fastify/swagger'
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
+import { fromZodError } from 'zod-validation-error'
+import { ZodError } from '../config/zod-v4'
 import { userRoutes } from './routes/user-routes'
 import { AppError } from '../../core/errors/app-error'
-import { ZodError } from 'zod'
-import { fromZodError } from 'zod-validation-error'
 import { env } from '../config/env'
+import fastifySwaggerUi from '@fastify/swagger-ui'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -19,6 +22,24 @@ app.register(fastifyCors, {
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
+
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: 'User Service',
+      description: 'API for User Service',
+      version: '1.0.0',
+    },
+  },
+  transform: jsonSchemaTransform,
+})
+app.register(fastifySwaggerUi, {
+  routePrefix: '/docs',
+  uiConfig: {
+    docExpansion: 'list',
+    deepLinking: false,
+  },
+})
 
 app.get('/', () => {
   return { status: 'ok' }
